@@ -128,7 +128,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
     'DEFAULT_PERMISSION_CLASSES': [
-        # THIS ALLOWS LITERALLY ANYONE TO ACCESS OUR API
+        # THIS ALLOWS LITERALLY ANY USER TO ACCESS OUR API
         # https://www.django-rest-framework.org/api-guide/permissions/#allowany
         'rest_framework.permissions.AllowAny'
         ],
