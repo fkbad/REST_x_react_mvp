@@ -6,12 +6,12 @@ from .models import Language, Book, BookInstance, Genre, Author
 # which includes automatically determining what fields will be part
 # of the serialized output and implmenting 
 class LanguageSerializer(serializers.HyperlinkedModelSerializer):
-    # related name in the Book class is "books", thus the 
+    # related_name in the Book class is "books", thus the 
     # variable name is books
     books = serializers.HyperlinkedRelatedField(
-            # view_name="book-detail",
+            view_name="book-detail",
             # testing longer basename
-            view_name = "book-but-a-longer_viewname_with_extra-shit=detail",
+            # view_name = "book-but-a-longer_viewname_with_extra-shit-detail",
             many=True, 
             read_only=True,
             )
@@ -63,16 +63,24 @@ class BookSerializer(serializers.ModelSerializer):
             read_only=True,
             )
 
-    # instances = serializers.HyperlinkedRelatedField(
-    #         view_name='-detail',
-    #         many=True, 
-    #         read_only=True,
-    #         )
+    instances = serializers.HyperlinkedRelatedField(
+            # basename "bookinstance" in urls.py router 
+            view_name='bookinstance-detail',
+            many=True, 
+            read_only=True,
+            )
+
+    author = serializers.HyperlinkedRelatedField(
+            # basename "bookinstance" in urls.py router 
+            view_name='author-detail',
+            many=False, 
+            read_only=True,
+            )
+
     class Meta:
         model = Book
         # fields must be the computer names, not verbose_name's
-        # fields = ['url','id','title','author','summary','isbn','genre','language','instances']
-        fields = ['url','id','title','author','summary','isbn','genre','language']
+        fields = ['url','id','title','author','summary','isbn','genre','language','instances']
 
 class BookInstanceSerializer(serializers.HyperlinkedModelSerializer):
 

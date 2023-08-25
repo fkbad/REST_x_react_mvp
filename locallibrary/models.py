@@ -26,6 +26,9 @@ class Author(models.Model):
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
+    class Meta:
+        ordering=['id']
+
 class Book(models.Model):
     """Model representing a book, conceptual idea of one"""
 
