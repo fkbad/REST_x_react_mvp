@@ -37,13 +37,21 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # 3rd party
     'rest_framework',
+    'corsheaders',
+
+    # personal
     'locallibrary',
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+
+    # placed at least above the common middleware
+    # https://pypi.org/project/django-cors-headers/
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -124,6 +132,8 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# 3rd party package configuration 
+
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
@@ -133,4 +143,14 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny'
         ],
 }
+CORS_ALLOWED_ORIGINS = [
+        'http://localhost:8000',
+        # default port for the react + js + swc Vite app
+        'http://localhost:5173',
+]
+
+
+CSRF_TRUSTED_ORIGINS = [
+        'http://localhost:5173',
+]
 
