@@ -121,7 +121,9 @@ class Language(models.Model):
     """
     name = models.CharField(
             max_length=200,
-            help_text="The primary language a book is written in"
+            help_text="The primary language a book is written in",
+            # this uniqueness is case sensitive
+            unique=True,
             )
 
     def __str__(self):
