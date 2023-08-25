@@ -27,7 +27,7 @@ router = DefaultRouter()
 router.register(r'languages', views.LanguageViewSet,basename="language")
 router.register(r'genres', views.GenreViewSet,basename="genre")
 router.register(r'authors', views.AuthorViewSet,basename="author")
-router.register(r'books', views.BookViewSet,basename="book")
+router.register(r'books', views.BookViewSet,basename="book-but-a-longer_viewname_with_extra-shit")
 router.register(r'bookinstances', views.BookInstanceViewSet,basename="bookinstance")
 
 urlpatterns = [

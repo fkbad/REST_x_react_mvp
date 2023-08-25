@@ -9,7 +9,9 @@ class LanguageSerializer(serializers.HyperlinkedModelSerializer):
     # related name in the Book class is "books", thus the 
     # variable name is books
     books = serializers.HyperlinkedRelatedField(
-            view_name="book-detail",
+            # view_name="book-detail",
+            # testing longer basename
+            view_name = "book-but-a-longer_viewname_with_extra-shit=detail",
             many=True, 
             read_only=True,
             )
