@@ -62,8 +62,8 @@ class BookSerializer(serializers.ModelSerializer):
             many=True, 
             # this read only means that it is not allowed to be 
             # changed from the web REST API
-            read_only=True,
-            # queryset=Genre.objects.all(),
+            # read_only=True,
+            queryset=Genre.objects.all(),
             )
 
     instances = serializers.HyperlinkedRelatedField(
@@ -93,15 +93,3 @@ class BookInstanceSerializer(serializers.HyperlinkedModelSerializer):
         read_only_fields = ['id']
         
 
-August 20, 2023 - August 26, 2023
-3.5 hours : Mon, 8/21 06:00 PM-09:30 PM : more react learning
-3.5 hours : Tue, 8/22 08:00 AM-11:30 AM : react + revised weekly meeting
-2 hours : Tue, 8/22 12:00 PM-02:00 PM : more react
-4.25 hours : Wed, 8/23 09:45 AM-02:00 PM : react work
-3 hours : Wed, 8/23 06:00 PM-09:00 PM : react work on slightly larger project! woo!
-4.5 hours : Thu, 8/24 08:30 AM-01:00 PM : rest framework learning!
-4 hours : Thu, 8/24 01:30 PM-05:30 PM : server code for MVP up!
-0.75 hours : Thu, 8/24 06:00 PM-06:45 PM : finishing hyperlinked REST api
-4.5 hours : Fri, 8/25 10:00 AM-02:30 PM : react work with Django
-
-30 total hours

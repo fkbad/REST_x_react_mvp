@@ -1,21 +1,16 @@
-import Getter from './components/Getter'
-import BookForm from './components/BookForm'
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { styled } from 'styled-components';
-import './index.css'
-
-const Background = styled.div`
-`;
+import { useState } from 'react'
+import reactLogo from './assets/react.svg'
+import viteLogo from '/vite.svg'
+import './App.css'
 
 function App() {
+  const [count, setCount] = useState(0)
+
   return (
-    <Background>
-      <p> Homepage for accessing react MVP
-      </p>
-      <BookForm />
-      <Getter />
-    </Background>
-  );
+    <div className='App'>
+      Vite App
+    </div>
+  )
 }
 
 export default App
