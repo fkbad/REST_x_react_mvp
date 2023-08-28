@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState, useEffect, useCallback } from 'react';
 
 
 
@@ -11,13 +11,12 @@ http://localhost:8000/api/genres/1/
 
    * for origami genre
    */
-  const [genre, setGenre] = useState("Nothing Fetched Yet");
+  const [genre, setGenre] = useState(false);
   // to store loading status 
   const [isLoading, setIsLoading] = useState(false);
   // to store and errors from fetching from the API
-  const [error, setError] = useState(false);
-
-
+  // either null or some error
+  const [error, setError] = useState(null);
 
 
   useEffect(() => {
@@ -77,7 +76,8 @@ http://localhost:8000/api/genres/1/
 
     function fetchGenreHandler() {
       // function to actually fetch from API
-      setIsLoading(true)
+      setIsLoading(true);
+      setError(null);
 
 
       // then chains are really nice, literally taking the output from the previous .then as the input to the next one
@@ -86,7 +86,7 @@ http://localhost:8000/api/genres/1/
         `http://localhost:8000/api/genres/${Math.round(Math.random() * 4 + 1)}/`,
         {
           // axios signal config
-          timeout: 1000,
+          timeout: 5000,
           signal: controller.signal,
         }
       )
@@ -97,6 +97,7 @@ http://localhost:8000/api/genres/1/
 
         .then((data) => {
           if (!ignore_request_output) {
+            setError(false)
             console.info("received data", data);
             const { books, name, url } = data;
 
@@ -116,7 +117,7 @@ http://localhost:8000/api/genres/1/
 
             setIsLoading(false)
 
-            setGenre(JSON.stringify(outputGenre, null, 2));
+            setGenre(outputGenre);
           } else {
             console.warn("received request where ignore_request_output was True", data)
           }
@@ -142,11 +143,36 @@ http://localhost:8000/api/genres/1/
     // no dependencies so useEffect is only run once upon component loading
   }, []);
 
+
+  // fill in the content based on the combination of state:
+  let content = <p>Found no genre</p>
+
+  if (genre) {
+    content = (<section>
+      <p>{genre.name}</p>
+      <p>{genre.url}</p>
+      <p>{genre.books}</p>
+    </section>
+    );
+  }
+
+
+
+  if (error) {
+    content = <p>{error.name}{error.code}</p>;
+  }
+
+  if (isLoading) {
+    content = <p>Loading...</p>;
+  }
+
+  console.info("content determined to be:", content)
   return (
     <section>
-      {genre}
+      {content}
     </section>
   );
 }
 
 export default Getter
+
