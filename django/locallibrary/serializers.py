@@ -50,10 +50,14 @@ class BookSerializer(serializers.ModelSerializer):
     # the name of the variables (in this case 'language' and 'genre' need to match 
                                  # the field name we're referencing in the model)
     # it couldn't be "languages = ..." because the field is called langauge (no s)
-    language = serializers.HyperlinkedRelatedField(
-            view_name='language-detail',
-            allow_empty=False, 
-            many=True, 
+    # language = serializers.HyperlinkedRelatedField(
+    #         view_name='language-detail',
+    #         allow_empty=False, 
+    #         many=True, 
+    #         read_only=True,
+    #         )
+    language = LanguageSerializer(
+            many=True,
             read_only=True,
             )
     genre = serializers.HyperlinkedRelatedField(
