@@ -46,35 +46,22 @@ class AuthorSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['url','id','first_name', 'last_name', 'date_of_birth', 'date_of_death','books']
 
 class BookSerializer(serializers.ModelSerializer):
-    # https://www.django-rest-framework.org/api-guide/relations/#slugrelatedfield
-    # the name of the variables (in this case 'language' and 'genre' need to match 
-                                 # the field name we're referencing in the model)
-    # it couldn't be "languages = ..." because the field is called langauge (no s)
-    # language = serializers.HyperlinkedRelatedField(
-    #         view_name='language-detail',
-    #         allow_empty=False, 
-    #         many=True, 
-    #         read_only=True,
-    #         )
     language = LanguageSerializer(
             many=True,
-            read_only=True,
+            read_only=False,
             )
-    genre = serializers.HyperlinkedRelatedField(
-            view_name='genre-detail',
-            allow_empty=False, 
-            many=True, 
-            # this read only means that it is not allowed to be 
-            # changed from the web REST API
-            # read_only=True,
-            queryset=Genre.objects.all(),
+    
+    genre = GenreSerializer(
+            many=True,
+            read_only=False,
             )
 
     instances = serializers.HyperlinkedRelatedField(
             # basename "bookinstance" in urls.py router 
             view_name='bookinstance-detail',
             many=True, 
-            read_only=True,
+            read_only=False,
+            queryset=BookInstance.objects.all()
             )
 
     author = serializers.HyperlinkedRelatedField(
