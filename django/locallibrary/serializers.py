@@ -45,46 +45,6 @@ class AuthorSerializer(serializers.HyperlinkedModelSerializer):
         model = Author
         fields = ['url','id','first_name', 'last_name', 'date_of_birth', 'date_of_death','books']
 
-class BookSerializer(serializers.ModelSerializer):
-    # https://www.django-rest-framework.org/api-guide/relations/#slugrelatedfield
-    # the name of the variables (in this case 'language' and 'genre' need to match 
-                                 # the field name we're referencing in the model)
-    # it couldn't be "languages = ..." because the field is called langauge (no s)
-    language = serializers.HyperlinkedRelatedField(
-            view_name='language-detail',
-            allow_empty=False, 
-            many=True, 
-            read_only=True,
-            )
-    genre = serializers.HyperlinkedRelatedField(
-            view_name='genre-detail',
-            allow_empty=False, 
-            many=True, 
-            # this read only means that it is not allowed to be 
-            # changed from the web REST API
-            # read_only=True,
-            queryset=Genre.objects.all(),
-            )
-
-    instances = serializers.HyperlinkedRelatedField(
-            # basename "bookinstance" in urls.py router 
-            view_name='bookinstance-detail',
-            many=True, 
-            read_only=True,
-            )
-
-    author = serializers.HyperlinkedRelatedField(
-            # basename "bookinstance" in urls.py router 
-            view_name='author-detail',
-            many=False, 
-            queryset=Author.objects.all()
-            )
-
-    class Meta:
-        model = Book
-        # fields must be the computer names, not verbose_name's
-        fields = ['url','id','title','author','summary','isbn','genre','language','instances']
-
 class BookInstanceSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
@@ -92,4 +52,71 @@ class BookInstanceSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['url','id','book','imprint','due_back','status']
         read_only_fields = ['id']
         
+
+class BookSerializer(serializers.ModelSerializer):
+    language = LanguageSerializer(
+            many=True,
+            read_only=True,
+            )
+
+    # https://stackoverflow.com/questions/26561640/django-rest-framework-read-nested-data-write-integer
+    # how to do nested read flat write
+    language_ids = serializers.PrimaryKeyRelatedField(
+            many=True,
+            # only want to reference the ids when I'm writing
+            write_only=True,
+            source='language',
+            queryset=Language.objects.all(),
+            )
+    
+    genre = GenreSerializer(
+            many=True,
+            read_only=True,
+            )
+
+    genre_ids = serializers.PrimaryKeyRelatedField(
+            many=True,
+            # only want to reference the ids when I'm writing
+            write_only=True,
+            source='genre',
+            queryset=Genre.objects.all(),
+            )
+
+    instances = BookInstanceSerializer(
+            many=True, 
+            read_only=True,
+            # you can create a book with no instances
+            required=False,
+            );
+
+    author = AuthorSerializer(
+            many=False, 
+            read_only=True,
+            )
+
+    author_id = serializers.PrimaryKeyRelatedField(
+            many=False,
+            # only want to reference the ids when I'm writing
+            write_only=True,
+            source='author',
+            queryset=Author.objects.all(),
+            )
+
+    class Meta:
+        model = Book
+        # fields must be the computer names, not verbose_name's
+        fields = ['url',
+                  'id',
+                  'title',
+                  'summary',
+                  'isbn',
+                  'author',
+                  'author_id',
+                  'genre',
+                  'genre_ids',
+                  'language',
+                  'language_ids',
+                  'instances',
+                  ]
+
 
