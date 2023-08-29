@@ -101,7 +101,7 @@ function BookForm({ handleOnSubmit }) {
         <Row>
           <GenreMultiSelect
             contolId="bookFormGenre"
-            placeholder="Select Genre(s) (ctrl/cmd + click for multiple)"
+            placeholder="Select Genre(s)"
             onChange={handleInputChange}
             // name for handleInputChange to parse with
             name="genre"

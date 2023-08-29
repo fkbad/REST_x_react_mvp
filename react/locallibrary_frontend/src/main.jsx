@@ -10,6 +10,7 @@ import "./index.css";
 import BookList from "./components/BookList";
 import AddBook from "./components/AddBook";
 import Header from "./components/Header";
+import GenreMultiSelect from "./components/genre/GenreMultiSelect";
 
 // https://reactrouter.com/en/main/start/tutorial
 const router = createBrowserRouter([
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
       {
         path: "/add",
         element: <AddBook />,
+      },
+      {
+        path: "/genremulti",
+        element: <GenreMultiSelect />,
       },
     ],
   },

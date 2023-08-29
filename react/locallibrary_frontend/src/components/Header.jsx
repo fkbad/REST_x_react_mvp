@@ -16,6 +16,9 @@ const Header = () => {
             <li>
               <Link to={`newthing`}>new thing</Link>
             </li>
+            <li>
+              <Link to={`genremulti`}>Genre Multi Select Debugging</Link>
+            </li>
           </ul>
         </nav>
       </div>
