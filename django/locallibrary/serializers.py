@@ -45,6 +45,14 @@ class AuthorSerializer(serializers.HyperlinkedModelSerializer):
         model = Author
         fields = ['url','id','first_name', 'last_name', 'date_of_birth', 'date_of_death','books']
 
+class BookInstanceSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = BookInstance
+        fields = ['url','id','book','imprint','due_back','status']
+        read_only_fields = ['id']
+        
+
 class BookSerializer(serializers.ModelSerializer):
     language = LanguageSerializer(
             many=True,
@@ -56,31 +64,18 @@ class BookSerializer(serializers.ModelSerializer):
             read_only=False,
             )
 
-    instances = serializers.HyperlinkedRelatedField(
-            # basename "bookinstance" in urls.py router 
-            view_name='bookinstance-detail',
+    instances = BookInstanceSerializer(
             many=True, 
             read_only=False,
-            queryset=BookInstance.objects.all()
-            )
+            );
 
-    author = serializers.HyperlinkedRelatedField(
+    author = AuthorSerializer(
             # basename "bookinstance" in urls.py router 
-            view_name='author-detail',
             many=False, 
-            queryset=Author.objects.all()
             )
 
     class Meta:
         model = Book
         # fields must be the computer names, not verbose_name's
         fields = ['url','id','title','author','summary','isbn','genre','language','instances']
-
-class BookInstanceSerializer(serializers.HyperlinkedModelSerializer):
-
-    class Meta:
-        model = BookInstance
-        fields = ['url','id','book','imprint','due_back','status']
-        read_only_fields = ['id']
-        
 
