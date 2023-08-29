@@ -10,6 +10,32 @@
 
 import { useState } from 'react';
 import Form from 'react-bootstrap/Form';
+import GenreMultiSelectItem from './GenreMultiSelectItem';
+
+let DUMMY_GENRES = [
+  {
+    url: "abc",
+    id: 1,
+    name: "turkish"
+  },
+  {
+    url: "123",
+    id: 2,
+    name: "turkglish"
+  },
+  {
+    id: 3,
+    url: "giw",
+    name: "french"
+  },
+  {
+    url: "asf",
+    id: 4,
+    name: "dutch east indian"
+  },
+]
+
+
 
 
 function GenreMultiSelect({
@@ -66,9 +92,13 @@ function GenreMultiSelect({
           aria-label="Default select example"
           multiple
         >
-          <option value="1">One</option>
-          <option value="2">Two</option>
-          <option value="3">Three</option>
+          {DUMMY_GENRES
+            .map(({ id, name }) =>
+              <GenreMultiSelectItem
+                // primary key guarenteed to be unique from DB
+                key={id}
+                id={id}
+                name={name} />)}
         </Form.Select>
         <Form.Text className="text-muted">
           {caption}
