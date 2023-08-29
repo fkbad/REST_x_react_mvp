@@ -30,14 +30,29 @@ function GenreMultiSelect({
    *  label: the title for this Form Component
    */
 
-  function handleSelectChange(event) {
+  function handleSelectChange({ target: { selectedOptions } }) {
     /* function to handle the selection change
+     *
+     * Input:
+     *    an event fed into the onChange prop of the selection
+     *    we extract the event.target.selectedOptions field
+     *    which holds all of the selected options
+     *      
+     *      You can call on the value of a selected options with 
+     *      option.value
      */
-    console.groupEnd()
     console.group("Genre Select Change Handler")
-    // console.info(event)
-    console.info(event.target.selectedOptions)
-    console.info(event.target.value, event.target.name, event.target.options)
+    console.info(selectedOptions)
+
+    // this becomes an array of the selected options values
+    // turned into integers
+    let options_array = Array
+      .from(selectedOptions)
+      // + casts to number
+      .map(option => +option.value)
+    console.info(options_array)
+
+    console.groupEnd()
   }
   return (
     <>
