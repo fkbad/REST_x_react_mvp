@@ -56,26 +56,77 @@ class BookInstanceSerializer(serializers.HyperlinkedModelSerializer):
 class BookSerializer(serializers.ModelSerializer):
     language = LanguageSerializer(
             many=True,
-            read_only=False,
+            read_only=True,
+            )
+
+    # https://stackoverflow.com/questions/26561640/django-rest-framework-read-nested-data-write-integer
+    # how to do nested read flat write
+    language_ids = serializers.PrimaryKeyRelatedField(
+            many=True,
+            # only want to reference the ids when I'm writing
+            write_only=True,
+            source='language',
+            queryset=Language.objects.all(),
             )
     
     genre = GenreSerializer(
             many=True,
-            read_only=False,
+            read_only=True,
+            )
+
+    genre_ids = serializers.PrimaryKeyRelatedField(
+            many=True,
+            # only want to reference the ids when I'm writing
+            write_only=True,
+            source='genre',
+            queryset=Genre.objects.all(),
             )
 
     instances = BookInstanceSerializer(
             many=True, 
-            read_only=False,
+            read_only=True,
+            # you can create a book with no instances
+            required=False,
             );
 
+    instances_ids = serializers.PrimaryKeyRelatedField(
+            many=True,
+            # only want to reference the ids when I'm writing
+            write_only=True,
+            source='bookinstance',
+            queryset=BookInstance.objects.all(),
+            required=False,
+            )
+
     author = AuthorSerializer(
-            # basename "bookinstance" in urls.py router 
             many=False, 
+            read_only=True,
+            )
+
+    author_id = serializers.PrimaryKeyRelatedField(
+            many=False,
+            # only want to reference the ids when I'm writing
+            write_only=True,
+            source='author',
+            queryset=Author.objects.all(),
             )
 
     class Meta:
         model = Book
         # fields must be the computer names, not verbose_name's
-        fields = ['url','id','title','author','summary','isbn','genre','language','instances']
+        fields = ['url',
+                  'id',
+                  'title',
+                  'summary',
+                  'isbn',
+                  'author',
+                  'author_id',
+                  'genre',
+                  'genre_ids',
+                  'language',
+                  'language_ids',
+                  'instances',
+                  'instances_ids',
+                  ]
+
 

@@ -63,7 +63,9 @@ class Book(models.Model):
             related_name="books"
 
             )
-    language = models.ManyToManyField('Language',related_name="books")
+    language = models.ManyToManyField(
+            'Language',
+            related_name="books")
 
     def __str__(self):
         return f"{self.title} - {self.author}"
