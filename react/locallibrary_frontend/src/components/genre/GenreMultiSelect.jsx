@@ -13,27 +13,26 @@ import { useEffect, useState } from 'react';
 import Form from 'react-bootstrap/Form';
 import GenreMultiSelectItem from './GenreMultiSelectItem';
 
-let DUMMY_GENRES = [
-  {
-    url: "abc",
-    id: 1,
-    name: "turkish"
-  },
-  {
-    url: "123",
-    id: 2,
-    name: "turkglish"
-  },
-  {
-    id: 3,
-    url: "giw",
-    name: "french"
-  },
-  {
-    url: "asf",
-    id: 4,
-    name: "dutch east indian"
-  },
+let DUMMY_GENRES = [{
+  url: "abc",
+  id: 1,
+  name: "turkish"
+},
+{
+  url: "123",
+  id: 2,
+  name: "turkglish"
+},
+{
+  id: 3,
+  url: "giw",
+  name: "french"
+},
+{
+  url: "asf",
+  id: 4,
+  name: "dutch east indian"
+},
 ]
 
 
@@ -108,10 +107,10 @@ function GenreMultiSelect({
           if (!ignore_request_output) {
             setError(false)
             console.info("received data", data);
+            let outputGenres = parseGenreList(data)
 
 
             setIsLoading(false)
-
             setGenres(outputGenres);
           } else {
             console.warn("received request where ignore_request_output was True", data)
@@ -134,6 +133,14 @@ function GenreMultiSelect({
     // dependency array empty 
     []
   );
+
+  function parseGenreList(responseData) {
+    /* 
+     * function to take in the data response from the /genres/ GET
+     * and turn it into an array of javascript objects
+     */
+    return responseData.results
+  }
 
   function handleSelectChange({ target }) {
     /* function to handle the selection change
@@ -168,7 +175,7 @@ function GenreMultiSelect({
           aria-label="Default select example"
           multiple
         >
-          {DUMMY_GENRES
+          {genres
             .map(({ id, name }) =>
               <GenreMultiSelectItem
                 // primary key guarenteed to be unique from DB
