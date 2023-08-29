@@ -8,7 +8,8 @@
  * react-bootstrap form component
  */
 
-import { useState } from 'react';
+import axios from "axios";
+import { useEffect, useState } from 'react';
 import Form from 'react-bootstrap/Form';
 import GenreMultiSelectItem from './GenreMultiSelectItem';
 
@@ -58,6 +59,81 @@ function GenreMultiSelect({
    *
    *  label: the title for this Form Component
    */
+
+  const [genres, setGenres] = useState([]);
+  // to store loading status 
+  const [isLoading, setIsLoading] = useState(false);
+  // to store and errors from fetching from the API
+  // either null or some error
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+
+    // flag for ignoring stale request responses
+    let ignore_request_output = false;
+    // signal controller to be able to cancel axios request 
+    let controller = new AbortController();
+    fetchGenreHandler()
+
+    // cleanup function
+    return (() => {
+      ignore_request_output = true;
+      controller.abort()
+    });
+
+    function fetchGenreHandler() {
+      // function to actually fetch from API
+      setIsLoading(true);
+      setError(null);
+
+
+      // then chains are really nice, literally taking the output from the previous .then as the input to the next one
+      // the first argument is a function you define to run when the Promise successfully returns
+      axios.get(
+        // just getting the list
+        `http://localhost:8000/api/genres/`,
+        {
+          // axios signal config
+          timeout: 5000,
+          // the signal to look at for cancellations
+          signal: controller.signal,
+        }
+      )
+        .then(response => {
+          console.info("axios successfully returned with:", response);
+          return response.data
+        })
+
+        .then((data) => {
+          if (!ignore_request_output) {
+            setError(false)
+            console.info("received data", data);
+
+
+            setIsLoading(false)
+
+            setGenres(outputGenres);
+          } else {
+            console.warn("received request where ignore_request_output was True", data)
+          }
+
+          console.groupEnd()
+
+        }).catch(
+          error => {
+            console.error("RECEIVED AXIOS ERROR:", error);
+            console.groupEnd();
+            setIsLoading(false)
+            setError(error)
+          }
+
+        );
+      // END OF FETCH GENRE HANDLER
+    }
+  },
+    // dependency array empty 
+    []
+  );
 
   function handleSelectChange({ target }) {
     /* function to handle the selection change
