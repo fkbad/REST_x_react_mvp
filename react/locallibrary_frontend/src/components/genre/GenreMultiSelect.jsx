@@ -13,31 +13,6 @@ import { useEffect, useState } from 'react';
 import Form from 'react-bootstrap/Form';
 import GenreMultiSelectItem from './GenreMultiSelectItem';
 
-let DUMMY_GENRES = [{
-  url: "abc",
-  id: 1,
-  name: "turkish"
-},
-{
-  url: "123",
-  id: 2,
-  name: "turkglish"
-},
-{
-  id: 3,
-  url: "giw",
-  name: "french"
-},
-{
-  url: "asf",
-  id: 4,
-  name: "dutch east indian"
-},
-]
-
-
-
-
 function GenreMultiSelect({
   controlId,
   placeholder,
@@ -159,33 +134,73 @@ function GenreMultiSelect({
 
     console.groupEnd()
   }
+
+  // fill in the content based on the loading status 
+  let content
+
+  if (genres.length > 0 && !error) {
+    content = (<>
+      <Form.Select
+        // while the values in the html option elements are specified as strings, 
+        // the array can be a mix of integers or strings and they are processed correctly
+        // eg: 
+        //    value = ["1", 2] // will bind values "1" and "2"
+        value={selectedValues}
+        onChange={handleSelectChange}
+        name={name}
+        size={`${genres.length <= 8 ? genres.length : 8}`}
+        aria-label="Default select example"
+        multiple
+        // disable the selection only if there was an error
+        disabled={error}
+      >
+        {genres
+          .map(({ id, name }) =>
+            <GenreMultiSelectItem
+              // primary key guarenteed to be unique from DB
+              key={id}
+              id={id}
+              name={name} />)}
+      </Form.Select >
+      <Form.Text className="text-muted">
+        {caption}
+      </Form.Text>
+
+    </>);
+  }
+
+  else {
+    // text to fill in with if we didn't get our genres normally
+    let only_value_text
+    if (genres.length === 0) {
+      only_value_text = "No Genres Found"
+    }
+    if (error) {
+      only_value_text = `${error}`
+    }
+    if (isLoading) {
+      only_value_text = "Loading..."
+    }
+
+    content = (<>
+      <Form.Select
+        size="1"
+        aria-label="Genre Multi Select"
+        disabled
+      >
+        <option>{only_value_text}</option>
+      </Form.Select >
+
+    </>);
+  }
+
+  console.info("content determined to be:", content)
+
   return (
     <>
       <Form.Group controlId={controlId}>
         <Form.Label>{label}</Form.Label>
-        <Form.Select
-          // while the values in the html option elements are specified as strings, 
-          // the array can be a mix of integers or strings and they are processed correctly
-          // eg: 
-          //    value = ["1", 2] // will bind values "1" and "2"
-          value={selectedValues}
-          onChange={handleSelectChange}
-          name={name}
-          size="5"
-          aria-label="Default select example"
-          multiple
-        >
-          {genres
-            .map(({ id, name }) =>
-              <GenreMultiSelectItem
-                // primary key guarenteed to be unique from DB
-                key={id}
-                id={id}
-                name={name} />)}
-        </Form.Select>
-        <Form.Text className="text-muted">
-          {caption}
-        </Form.Text>
+        {content}
       </Form.Group >
     </>
   );
