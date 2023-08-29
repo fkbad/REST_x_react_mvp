@@ -129,12 +129,13 @@ function BookForm({ handleOnSubmit }) {
         <Row>
           <GenreMultiSelect
             contolId="bookFormGenre"
-            placeholder="Select Genre(s)"
             onChange={handleInputChange}
             // name for handleInputChange to parse with
             name="genre"
             selectedValues={selectedGenres}
           />
+
+
           <Form.Group controlId="bookFormSummary">
             <Form.Label>Summary</Form.Label>
             <Form.Control
