@@ -15,10 +15,12 @@ import Form from 'react-bootstrap/Form';
 function GenreMultiSelect({
   controlId,
   placeholder,
-  onChange,
+  onChange: parentOnChange,
   name,
   label = "Genre(s)",
   caption = "ctrl/cmd + click to select multiple",
+  selectedValues,
+
 }) {
   /* 
    * props:
@@ -31,9 +33,7 @@ function GenreMultiSelect({
    *  label: the title for this Form Component
    */
 
-  const [selectedValues, setSelectedValues] = useState([])
-
-  function handleSelectChange({ target: { selectedOptions } }) {
+  function handleSelectChange({ target }) {
     /* function to handle the selection change
      *
      * Input:
@@ -45,16 +45,8 @@ function GenreMultiSelect({
      *      option.value
      */
     console.group("Genre Select Change Handler")
-    console.info(selectedOptions)
-
-    // this becomes an array of the selected options values
-    // turned into integers
-    let selectedOptionValues = Array
-      .from(selectedOptions)
-      // + casts to number
-      .map(option => +option.value)
-    console.info(selectedOptionValues)
-    setSelectedValues(selectedOptionValues)
+    console.warn(target.name)
+    parentOnChange({ target })
 
     console.groupEnd()
   }
@@ -67,7 +59,7 @@ function GenreMultiSelect({
           // the array can be a mix of integers or strings and they are processed correctly
           // eg: 
           //    value = ["1", 2] // will bind values "1" and "2"
-          value={console.warn("setting form values to:", selectedValues) || selectedValues}
+          value={selectedValues}
           onChange={handleSelectChange}
           name={name}
           size="5"
