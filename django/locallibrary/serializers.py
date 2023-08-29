@@ -89,15 +89,6 @@ class BookSerializer(serializers.ModelSerializer):
             required=False,
             );
 
-    instances_ids = serializers.PrimaryKeyRelatedField(
-            many=True,
-            # only want to reference the ids when I'm writing
-            write_only=True,
-            source='bookinstance',
-            queryset=BookInstance.objects.all(),
-            required=False,
-            )
-
     author = AuthorSerializer(
             many=False, 
             read_only=True,
@@ -126,7 +117,6 @@ class BookSerializer(serializers.ModelSerializer):
                   'language',
                   'language_ids',
                   'instances',
-                  'instances_ids',
                   ]
 
 
