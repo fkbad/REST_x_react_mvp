@@ -8,6 +8,7 @@
  * react-bootstrap form component
  */
 
+import { useState } from 'react';
 import Form from 'react-bootstrap/Form';
 
 
@@ -30,6 +31,8 @@ function GenreMultiSelect({
    *  label: the title for this Form Component
    */
 
+  const [selectedValues, setSelectedValues] = useState([])
+
   function handleSelectChange({ target: { selectedOptions } }) {
     /* function to handle the selection change
      *
@@ -46,11 +49,12 @@ function GenreMultiSelect({
 
     // this becomes an array of the selected options values
     // turned into integers
-    let options_array = Array
+    let selectedOptionValues = Array
       .from(selectedOptions)
       // + casts to number
       .map(option => +option.value)
-    console.info(options_array)
+    console.info(selectedOptionValues)
+    setSelectedValues(selectedOptionValues)
 
     console.groupEnd()
   }
@@ -59,6 +63,11 @@ function GenreMultiSelect({
       <Form.Group controlId={controlId}>
         <Form.Label>{label}</Form.Label>
         <Form.Select
+          // while the values in the html option elements are specified as strings, 
+          // the array can be a mix of integers or strings and they are processed correctly
+          // eg: 
+          //    value = ["1", 2] // will bind values "1" and "2"
+          value={console.warn("setting form values to:", selectedValues) || selectedValues}
           onChange={handleSelectChange}
           name={name}
           size="5"
