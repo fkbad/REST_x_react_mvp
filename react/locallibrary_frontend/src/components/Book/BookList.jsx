@@ -7,7 +7,6 @@ const BookList = () => {
 
   // get the URL parameter
   let { pageNumber } = useParams()
-  console.warn(pageNumber)
 
   if (pageNumber === undefined) {
     // default page number when there is no number

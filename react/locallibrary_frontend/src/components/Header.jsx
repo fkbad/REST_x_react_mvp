@@ -17,6 +17,12 @@ const Header = () => {
               <Link to={`list/books/2`}>Book Page 2</Link>
             </li>
             <li>
+              <Link to={`list/books/3`}>Book Page 3</Link>
+            </li>
+            <li>
+              <Link to={`list/books/4`}>Book Page 4</Link>
+            </li>
+            <li>
               <Link to={`list/books/9`}>Book Page 9</Link>
             </li>
             <li>
