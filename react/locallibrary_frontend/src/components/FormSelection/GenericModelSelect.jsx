@@ -151,36 +151,38 @@ function GenericModelSelect({
      */
 
     console.group("Parsing Model List")
+    let isBook = modelName === "book"
+    let isBookInstance = modelName === "bookinstance"
+    let isAuthor = modelName === "author"
+    let isGenre = modelName === "genre"
+    let isLanguage = modelName === "language"
+
+    console.info(modelName, "with responseData:", responseData)
 
     let output = [];
-    if (modelName === "author") {
-      console.info("Author with responseData:", responseData)
-      output = shapeAuthorResults(responseData.results)
-
-
-    } else if (modelName === "genre") {
-      console.info("Genre with responseData:", responseData)
-      // genre comes baked in with id and name fields
-      return responseData.results
-
-    } else if (modelName === "language") {
-      console.info("Language  with responseData:", responseData)
-      return [
-        { id: 1, name: "DUMMY LANGUAGE" },
-        { id: 2, name: "SECOND DUMMY LANGUAGE" },
-      ]
-    } else if (modelName === "book") {
-      console.info("Book with responseData:", responseData)
+    if (isBook) {
       return [
         { id: 1, name: "DUMMY BOOK" },
         { id: 2, name: "SECOND DUMMY BOOK" },
       ]
-    } else if (modelName === "bookinstance") {
-      console.info("BookInstance with responseData:", responseData)
+
+    } else if (isBookInstance) {
       return [
         { id: 1, name: "DUMMY BOOK INSTANCE" },
         { id: 2, name: "SECOND DUMMY INSTANCE" },
       ]
+
+    } else if (isAuthor) {
+      output = shapeAuthorResults(responseData.results)
+
+    } else if (isGenre) {
+      // genre comes baked in with id and name fields
+      output = responseData.results
+
+    } else if (isLanguage) {
+      // genre comes baked in with id and name fields
+      output = responseData.results
+
     } else {
       let error = "Given invalid modelName in generic model select:" + modelName
       console.error(error)
