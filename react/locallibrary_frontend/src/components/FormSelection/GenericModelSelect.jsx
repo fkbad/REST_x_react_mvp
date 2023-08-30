@@ -201,10 +201,29 @@ function GenericModelSelect({
      *      option.value
      */
     console.group(`Generic (${modelName}) Model Select Change Handler`)
-    console.warn(target.name)
-    parentOnChange({ target })
 
+    let selected
+    if (canSelectMultiple) {
+      let htmlSelected = target.selectedOptions
+      selected = Array
+        .from(htmlSelected)
+        // + casts to number
+        .map(option => +option.value)
+      console.log("multi selected:", selected)
+
+    } else {
+      // only allowing single values
+      selected = target.value
+      console.log("single selected:", selected)
+    }
+    let changeObject = {
+      modelName: modelName,
+      selectedValues: selected
+    }
+    console.info("sending up changeObject:", changeObject, "to parent")
     console.groupEnd()
+    parentOnChange(changeObject)
+
   }
 
   let controlId = parentFormName + modelName

@@ -2,6 +2,9 @@ venv
 db.sqlite3
 __pycache__/
 
+
+react_old/
+
 # Created by https://www.toptal.com/developers/gitignore/api/react
 # Edit at https://www.toptal.com/developers/gitignore?templates=react
 

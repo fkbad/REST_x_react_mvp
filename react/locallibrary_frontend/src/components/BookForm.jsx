@@ -4,26 +4,32 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Card from 'react-bootstrap/Card';
-import GenreMultiSelect from './genre/GenreMultiSelect';
-
-
-
+import GenreSelect from './genre/GenreSelect';
+import AuthorSelect from './Author/AuthorSelect';
+import LanguageSelect from './Language/LanguageSelect';
 
 function BookForm({ handleOnSubmit }) {
   const [title, setTitle] = useState('')
   const [isbn, setIsbn] = useState('')
   const [summary, setSummary] = useState('')
   const [selectedGenres, setSelectedGenres] = useState([])
+  const [selectedAuthor, setSelectedAuthor] = useState("")
+  const [selectedLanguages, setSelectedLanguages] = useState([])
 
 
   const [errorMessage, setErrorMessage] = useState(null)
 
   function handleFormSubmission(event) {
     event.preventDefault();
-    const formValues = [title, isbn, summary]
+
+    const formValues = [title, isbn, summary, selectedLanguages, selectedAuthor, selectedGenres]
     let errorMessage = ''
 
+    console.info("Form submission with values:", formValues)
     // https://www.freecodecamp.org/news/react-crud-app-how-to-create-a-book-management-app-from-scratch/
+    // even works for numbers and arrays! 
+    // if any field is an empty string, or an empty array
+    // this will return false
     const allFieldsFilled = formValues.every((field) => {
       const value = `${field}`.trim();
       return value !== '' && value !== '0';
@@ -34,6 +40,9 @@ function BookForm({ handleOnSubmit }) {
         title,
         isbn,
         summary,
+        selectedAuthor,
+        selectedGenres,
+        selectedLanguages
       };
       handleOnSubmit(book);
     } else {
@@ -41,7 +50,7 @@ function BookForm({ handleOnSubmit }) {
     }
     setErrorMessage(errorMessage);
   }
-  function handleInputChange({ target }) {
+  function handleNonGenericInputChange({ target }) {
     // event.target is a reference to the object where this function was called upon
     // the name and value are both required props
     // for the form control that this function gets attached to
@@ -50,45 +59,62 @@ function BookForm({ handleOnSubmit }) {
     // name is self-defined for control flow in this function
     console.group("BookForm Input Changed")
 
-    // extract the name for parsing 
-    const { name: fieldName } = target
+    // all of these fields follow the same logic of having 
+    // using the event.target.value
+    const { value, name: fieldName } = target
 
-    if (fieldName === "genre") {
-      const { selectedOptions } = target
-      console.info("genre selected changed with:", selectedOptions)
-
-      // this becomes an array of the selected options values
-      // turned into integers
-      let selectedOptionValues = Array
-        .from(selectedOptions)
-        // + casts to number
-        .map(option => +option.value)
-      console.info(selectedOptionValues)
-
-      setSelectedGenres(selectedOptionValues)
-
-      console.groupEnd()
-
+    console.info("input update happened with:", fieldName, value)
+    if (fieldName === "title") {
+      setTitle(value)
+    } else if (fieldName === "isbn") {
+      setIsbn(value)
+    } else if (fieldName === "summary") {
+      setSummary(value)
     } else {
-      // all of these fields follow the same logic of having 
-      // using the event.target.value
-      const { value } = target
-      console.info("input update happened with:", fieldName, value)
-      if (fieldName === "title") {
-        setTitle(value)
-      } else if (fieldName === "isbn") {
-        setIsbn(value)
-      } else if (fieldName === "summary") {
-        setSummary(value)
-      } else {
-        console.error("somehow submitted on a fieldname that wasn't title, isbn or summar:", fieldName, value)
-      }
-
+      console.error("somehow submitted on a fieldname that wasn't title, isbn or summar:", fieldName, value)
     }
+
 
     console.groupEnd()
 
   };
+  function handleGenericInputChange({ modelName, selectedValues }) {
+    /* function to handle changes in any of the kinds of "Generic" 
+     * select components.
+     *
+     * Inputs:
+     *    one object with fields:
+     *    modelName: the name of the model for that component
+     *    selectedValues: either a single ID or an array of ID's
+     *                    which are the values and primary keys of all 
+     *                    selected models.
+     */
+
+    // we only would have these 3 generic components in the BookForm
+    let isGenre = modelName === "genre"
+    let isAuthor = modelName === "author"
+    let isLanguage = modelName === "language"
+
+    console.group("Generic Input Change in Book Form")
+    if (isGenre) {
+      console.info("genre selected changed with:", selectedValues)
+      setSelectedGenres(selectedValues)
+      console.info("set genre to:", selectedGenres)
+
+    } else if (isAuthor) {
+      console.info("author selected changed with:", selectedValues)
+      setSelectedAuthor(selectedValues)
+      console.info("set author to:", selectedAuthor)
+
+    } else if (isLanguage) {
+      console.info("language selected changed with:", selectedValues)
+      setSelectedLanguages(selectedValues)
+      console.info("set languages to:", selectedLanguages)
+    }
+
+    console.groupEnd()
+  }
+
 
   const variant = "Secondary"
   return (
@@ -108,7 +134,7 @@ function BookForm({ handleOnSubmit }) {
               <Form.Control
                 // name for handleInputChange to parse with
                 name="title"
-                onChange={handleInputChange}
+                onChange={handleNonGenericInputChange}
                 type="text"
                 placeholder="Enter title" />
             </Form.Group>
@@ -119,7 +145,7 @@ function BookForm({ handleOnSubmit }) {
               <Form.Control
                 // name for handleInputChange to parse with
                 name="isbn"
-                onChange={handleInputChange}
+                onChange={handleNonGenericInputChange}
                 type="text"
                 placeholder="13 Digit ISBN-13 Identifer" />
             </Form.Group>
@@ -127,12 +153,26 @@ function BookForm({ handleOnSubmit }) {
         </Row>
         {/* summary */}
         <Row>
-          <GenreMultiSelect
-            contolId="bookFormGenre"
-            onChange={handleInputChange}
-            // name for handleInputChange to parse with
-            name="genre"
+          <GenreSelect
+            onChange={handleGenericInputChange}
+            parentFormName='BookForm'
             selectedValues={selectedGenres}
+            // can have multiple genres per book
+            canSelectMultiple={true}
+          />
+          <AuthorSelect
+            onChange={handleGenericInputChange}
+            parentFormName='BookForm'
+            selectedValues={selectedAuthor}
+            // only 1 author per book
+            canSelectMultiple={false}
+          />
+          <LanguageSelect
+            onChange={handleGenericInputChange}
+            parentFormName='BookForm'
+            selectedValues={selectedLanguages}
+            // can have muliple languages for a book
+            canSelectMultiple={true}
           />
 
 
@@ -142,7 +182,7 @@ function BookForm({ handleOnSubmit }) {
               placeholder="A Brief Summary of the Book"
               // name for handleInputChange to parse with
               name="summary"
-              onChange={handleInputChange}
+              onChange={handleNonGenericInputChange}
 
               // make this element be turned into a <textarea>
               // as tall as 6 rows. Since the summary is multiple sentences

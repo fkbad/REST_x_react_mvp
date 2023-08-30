@@ -10,22 +10,29 @@
 
 import GenericModelSelect from "../FormSelection/GenericModelSelect";
 
-function GenreMultiSelect({
+function GenreSelect({
   onChange: parentOnChange,
   selectedValues: selectedGenres,
   parentFormName = "UNSETPARENTNAME",
+  // by default, just make is a normal dropdown
+  canSelectMultiple = false
 }) {
+  function mockParentOnChange(data) {
+    console.group("In Genre Multi Select Changer")
+    console.info(data)
+    console.groupEnd()
+  }
   return (
     <GenericModelSelect
       parentFormName={parentFormName}
       onChange={parentOnChange}
       modelName="genre"
       selectedValues={selectedGenres}
-      canSelectMultiple={true}
+      canSelectMultiple={canSelectMultiple}
     />
   );
 }
 
-export default GenreMultiSelect
+export default GenreSelect
 
 
