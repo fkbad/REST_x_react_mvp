@@ -19,17 +19,27 @@ function GenericModelSelect({
   onChange: parentOnChange,
   modelName,
   selectedValues,
+  canSelectMultiple,
 
 }) {
   /* 
    * props:
-   *  controlId: the control id to be set for the overall form group
+   *  parentFormName: the name of the overall form component that is invoking this generic component. Used to contruct the controlId for the Form.Group
+   *
    *  onChange: the function to call whenever a change occurs
    *            passed down from the parent form
    *
-   *  name: the name to use for the form control element 
+   *  modelName: the name of the actual model being used for this generic component. 
+   *  Used to determine:
+   *    the API endpoint
+   *    controlId (parentFormName + modelName)
+   *    how data is parsed in parseModelListForFormOptions()
+   *    
+   *  canSelectMultiple: boolean to tell if this should be a multi-select or a single selection.
+   *      eg: books should only be able to select one author
+   *          but books should be able to select multiple languages
+   *      
    *
-   *  label: the title for this Form Component
    */
 
   const [models, setModels] = useState([]);
@@ -80,7 +90,7 @@ function GenericModelSelect({
           if (!ignore_request_output) {
             setError(false)
             console.info("received data", data);
-            let responseModels = parseModelList(data)
+            let responseModels = parseModelListForFormOptions(data)
 
 
             setIsLoading(false)
@@ -107,12 +117,44 @@ function GenericModelSelect({
     []
   );
 
-  function parseModelList(responseData) {
+  function parseModelListForFormOptions(responseData) {
     /* 
      * function to take in the data response from the /genres/ GET
      * and turn it into an array of javascript objects
+     * specifically with field values:
+     *
+     *  id: primary key of the model
+     *  name: the display name for each model, to be used
+     *        in the drop down
      */
-    return responseData.results
+
+    console.group("Parsing Model List with responseData:", responseData)
+
+    if (modelName === "author") {
+      return [
+        { id: 1, name: "DUMMY AUTHOR" },
+        { id: 2, name: "SECOND DUMMY AUTHOR" },
+      ]
+
+
+    } else if (modelName === "genre") {
+      return [
+        { id: 1, name: "DUMMY GENRE" },
+        { id: 2, name: "SECOND DUMMY GENRE" },
+      ]
+
+    } else if (modelName === "language ") {
+      return [
+        { id: 1, name: "DUMMY LANGUAGE" },
+        { id: 2, name: "SECOND DUMMY LANGUAGE" },
+      ]
+    } else {
+      let error = "Given invalid modelName in generic model select:" + modelName
+      console.error(error)
+      setError(error)
+      return []
+    }
+    // return responseData.results
   }
 
   function handleSelectChange({ target }) {
