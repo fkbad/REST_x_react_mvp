@@ -8,7 +8,7 @@ import {
 import "./index.css";
 
 import Header from "./components/Header";
-import BooksList from "./components/Book/BookList";
+import BookList from "./components/Book/BookList";
 import AddBook from "./components/Book/AddBook";
 
 // https://reactrouter.com/en/main/start/tutorial
@@ -18,8 +18,12 @@ const router = createBrowserRouter([
     element: <Header />,
     children: [
       {
+        path: "/list/books/",
+        element: <BookList />,
+      },
+      {
         path: "/list/books/:pageNumber",
-        element: <BooksList />,
+        element: <BookList />,
       },
       {
         path: "/add/books/",

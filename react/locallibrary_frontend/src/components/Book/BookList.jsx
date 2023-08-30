@@ -6,7 +6,14 @@ import { useNavigate, useParams } from "react-router-dom";
 const BookList = () => {
 
   // get the URL parameter
-  const { pageNumber } = useParams()
+  let { pageNumber } = useParams()
+  console.warn(pageNumber)
+
+  if (pageNumber === undefined) {
+    // default page number when there is no number
+    // parsed from URL
+    pageNumber = 1
+  }
   const navigate = useNavigate();
 
   // https://stackoverflow.com/questions/72149973/react-router-dom-v6-params-only-numbers
@@ -24,6 +31,9 @@ const BookList = () => {
   // to store and errors from fetching from the API
   // either null or some error
   const [error, setError] = useState(null);
+
+
+  // GET book data
   useEffect(() => {
 
     // flag for ignoring stale request responses
@@ -85,7 +95,7 @@ const BookList = () => {
     }
   },
     // dependency array empty such that this happens immediately
-    []
+    [pageNumber]
   );
 
 
