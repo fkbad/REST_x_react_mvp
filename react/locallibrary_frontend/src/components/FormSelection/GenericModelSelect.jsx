@@ -150,32 +150,33 @@ function GenericModelSelect({
      *        in the drop down
      */
 
-    console.group("Parsing Model List with responseData:", responseData)
+    console.group("Parsing Model List")
 
+    let output = [];
     if (modelName === "author") {
-      return [
-        { id: 1, name: "DUMMY AUTHOR" },
-        { id: 2, name: "SECOND DUMMY AUTHOR" },
-      ]
+      console.info("Author with responseData:", responseData)
+      output = shapeAuthorResults(responseData.results)
 
 
     } else if (modelName === "genre") {
-      return [
-        { id: 1, name: "DUMMY GENRE" },
-        { id: 2, name: "SECOND DUMMY GENRE" },
-      ]
+      console.info("Genre with responseData:", responseData)
+      // genre comes baked in with id and name fields
+      return responseData.results
 
     } else if (modelName === "language") {
+      console.info("Language  with responseData:", responseData)
       return [
         { id: 1, name: "DUMMY LANGUAGE" },
         { id: 2, name: "SECOND DUMMY LANGUAGE" },
       ]
     } else if (modelName === "book") {
+      console.info("Book with responseData:", responseData)
       return [
         { id: 1, name: "DUMMY BOOK" },
         { id: 2, name: "SECOND DUMMY BOOK" },
       ]
     } else if (modelName === "bookinstance") {
+      console.info("BookInstance with responseData:", responseData)
       return [
         { id: 1, name: "DUMMY BOOK INSTANCE" },
         { id: 2, name: "SECOND DUMMY INSTANCE" },
@@ -184,9 +185,38 @@ function GenericModelSelect({
       let error = "Given invalid modelName in generic model select:" + modelName
       console.error(error)
       setError(error)
-      return []
+
     }
-    // return responseData.results
+    return output
+  }
+
+  function shapeAuthorResults(authorArray) {
+    /* function to take in the responseData.results array
+     * of authors and turn them into a set of objects 
+     * with only fields of 
+     * id, and 
+     * name
+     *
+     * Input:
+     *    authorArray: array of objects returned from 
+     *                 axios GET call.
+     *
+     *                 Has fields of:
+     *                   url
+     *                   id
+     *                   first_name
+     *                   last_name
+     *                   date_of_birth
+     *                   date_of_death
+     *                   books
+     */
+    return authorArray.map(({ id, first_name, last_name }) => {
+      const name = first_name + " " + last_name
+      return {
+        id: id,
+        name: name,
+      }
+    });
   }
 
   function handleSelectChange({ target }) {
