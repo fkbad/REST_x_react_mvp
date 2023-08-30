@@ -40,9 +40,15 @@ function BookForm({ handleOnSubmit }) {
         title,
         isbn,
         summary,
-        selectedAuthor,
-        selectedGenres,
-        selectedLanguages
+        // in order to send a POST Request, 
+        // the related fields need to be given as numeric list
+        // of ids, and be named with the `_id` or `_ids` appended
+        // see the BookSerializer in 
+        // django/locallibrary/serializers.py
+        // for where these required field names are decided
+        author_id: selectedAuthor,
+        genre_ids: selectedGenres,
+        language_ids: selectedLanguages
       };
       handleOnSubmit(book);
     } else {
