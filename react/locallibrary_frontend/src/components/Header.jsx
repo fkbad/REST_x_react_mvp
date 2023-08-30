@@ -8,10 +8,16 @@ const Header = () => {
         <nav>
           <ul>
             <li>
-              <Link to={`add`}>Add Book</Link>
+              <Link to={`add/books/`}>Add Book</Link>
             </li>
             <li>
-              <Link to={`list`}>List Books</Link>
+              <Link to={`list/books/`}>List Books</Link>
+            </li>
+            <li>
+              <Link to={`list/books/2`}>Book Page 2</Link>
+            </li>
+            <li>
+              <Link to={`list/books/9`}>Book Page 9</Link>
             </li>
             <li>
               <Link to={`newthing`}>new thing</Link>

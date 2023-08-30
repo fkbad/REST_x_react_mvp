@@ -11,17 +11,18 @@ function Book({
   /* component to display a book
    */
   return (
-    <>
+    <section>
       <p>{url}</p>
       <p>{id}</p>
       <p>{title}</p>
       <p>{isbn}</p>
-      <p>{summary}</p>
+      <p>----------------------------</p>
+      {/* <p>{summary}</p> */}
       {/* <p>{author}</p> */}
       {/* <p>{genre}</p> */}
       {/* <p>{url}</p> */}
       {/* <p>{url}</p> */}
-    </>
+    </section>
   );
 }
 
