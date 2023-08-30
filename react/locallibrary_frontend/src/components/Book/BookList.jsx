@@ -5,30 +5,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import PaginationNavigator from "../Pagination/PaginationNavigator";
 
 const BookList = () => {
+  // STATE, URL PARAMETERS, and CONSTANTS
 
-  // get the URL parameter
-  let { pageNumber } = useParams()
-  pageNumber = +pageNumber
-
-  let API_ROOT = "http://localhost:8000/api/books/"
-  let API_ROOT_WITH_EMPTY_PAGE = `${API_ROOT}?page=`
-
-  if (pageNumber === undefined) {
-    // default page number when there is no number
-    // parsed from URL
-    pageNumber = 1
-  }
-  const navigate = useNavigate();
-
-  // https://stackoverflow.com/questions/72149973/react-router-dom-v6-params-only-numbers
-  // how to parse for only integers 
-  // and redirect if not
-  useEffect(() => {
-    if (!/\d+/.test(pageNumber)) {
-      navigate(-1);
-    }
-  }, [pageNumber, navigate]);
-
+  // list of book returned from the fetch
   const [books, setBooks] = useState([]);
 
   // state to track the pagination info
@@ -38,16 +17,51 @@ const BookList = () => {
   //   length of results
   const [paginationInfo, setPaginationInfo] = useState(null)
 
-  // state to keep track of total pages. Could potentially
-  // change if records are added or removed as the user switches pages
+  // state to keep track of total pages. 
+  // Could potentially change if records are added or removed 
+  // as the user switches pages
   const [totalPages, setTotalPages] = useState(null)
 
-  // to store loading status 
+  // boolean value
   const [isLoading, setIsLoading] = useState(false);
 
-  // to store and errors from fetching from the API
+  // to store any errors raised fetching from the API
   // either null or some error
   const [error, setError] = useState(null);
+
+
+  let API_ROOT = "http://localhost:8000/api/books/"
+  let API_ROOT_WITH_EMPTY_PAGE = `${API_ROOT}?page=`
+
+  // variable to fill in with page contents based on 
+  // state
+  let content
+  //
+  // variable to store a message to be filled in
+  // when there isn't a book list 
+  let fallbackMessage
+
+  // get the URL ?page=X parameter
+  let { pageNumber } = useParams()
+  pageNumber = +pageNumber
+  if (pageNumber === undefined) {
+    // default page number when there is no number
+    // parsed from URL
+    pageNumber = 1
+  }
+
+  // CUSTOM HOOKS
+
+  // Hook to redirect user if they give a non-integer hook
+  // https://stackoverflow.com/questions/72149973/react-router-dom-v6-params-only-numbers
+  // how to parse for only integers 
+  // and redirect if not
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!/\d+/.test(pageNumber)) {
+      navigate(-1);
+    }
+  }, [pageNumber, navigate]);
 
 
   // hook to recalculate the total number of pages 
@@ -62,32 +76,8 @@ const BookList = () => {
     }
   }, [paginationInfo, pageNumber]);
 
-  function getTotalPagesFromPaginationInfo({ count: totalModelCount, next, previous, resultLength }) {
-    /* function to calculate the total number of pages, given the pagination info
-     * from a Django REST framework List GET response
-     *
-     * Input:
-     *     paginationInfo object with fields:
-     *        count: total number of DB models
-     *        next: the URI of the next page's endpoint, if it exists, null if not
-     *        previous: the URI of the previous page's endpoint, if it exists, null if not
-     *        resultLength: the amount of models returned in this response
-     */
-
-    let pageSize = null
-    if (next !== null) {
-      // if there is another page, we know the current page is full
-      // which means that the result length must be the pagination length
-      pageSize = resultLength
-
-      return Math.ceil(totalModelCount / pageSize)
-    } else {
-      // this means we are on the last page
-      return pageNumber
-    }
-
-  }
-
+  // REQUEST SENDING CODE
+  //
   // GET book data
   useEffect(() => {
     console.info("books, paginationInfo:", books, paginationInfo)
@@ -164,18 +154,42 @@ const BookList = () => {
     // dependency array empty such that this happens immediately
     [pageNumber]
   );
+  // HELPER FUNCTIONS
+  function getTotalPagesFromPaginationInfo({ count: totalModelCount, next, previous, resultLength }) {
+    /* function to calculate the total number of pages, given the pagination info
+     * from a Django REST framework List GET response
+     *
+     * Input:
+     *     paginationInfo object with fields:
+     *        count: total number of DB models
+     *        next: the URI of the next page's endpoint, if it exists, null if not
+     *        previous: the URI of the previous page's endpoint, if it exists, null if not
+     *        resultLength: the amount of models returned in this response
+     */
 
+    let pageSize = null
+    if (next !== null) {
+      // if there is another page, we know the current page is full
+      // which means that the result length must be the pagination length
+      pageSize = resultLength
 
+      return Math.ceil(totalModelCount / pageSize)
+    } else {
+      // this means we are on the last page
+      return pageNumber
+    }
 
-  let content
-  let fallbackMessage
+  }
 
+  // CONTENT DETERMINING CODE
   if (books.length > 0 && !error) {
     content = (<>
       <h2>List of Book, page:{pageNumber}</h2>
       <PaginationNavigator
         emptyPagePath={API_ROOT_WITH_EMPTY_PAGE}
-        totalPageCount={totalPages} />
+        currentPage={pageNumber}
+        totalPageCount={totalPages}
+      />
       {books.map(({ author, genre, id, instances, isbn, language, summary, title, url }) => {
         return <Book
           key={id}
@@ -188,7 +202,9 @@ const BookList = () => {
       )}
       <PaginationNavigator
         emptyPagePath={API_ROOT_WITH_EMPTY_PAGE}
-        totalPageCount={totalPages} />
+        currentPage={pageNumber}
+        totalPageCount={totalPages}
+      />
 
     </>);
   }
@@ -208,8 +224,7 @@ const BookList = () => {
   }
 
 
-
-  // filler for now
+  // RENDER COMPONENT
   return (
     <>
       {content}
@@ -218,3 +233,4 @@ const BookList = () => {
 }
 
 export default BookList;
+
