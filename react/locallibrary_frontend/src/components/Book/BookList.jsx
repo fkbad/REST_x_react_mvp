@@ -2,12 +2,16 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import Book from "./Book";
 import { useNavigate, useParams } from "react-router-dom";
+import PaginationNavigator from "../Pagination/PaginationNavigator";
 
 const BookList = () => {
 
   // get the URL parameter
   let { pageNumber } = useParams()
   pageNumber = +pageNumber
+
+  let API_ROOT = "http://localhost:8000/api/books/"
+  let API_ROOT_WITH_EMPTY_PAGE = `${API_ROOT}?page=`
 
   if (pageNumber === undefined) {
     // default page number when there is no number
@@ -111,7 +115,7 @@ const BookList = () => {
 
 
       axios.get(
-        `http://localhost:8000/api/books/?page=${pageNumber}`,
+        `${API_ROOT_WITH_EMPTY_PAGE}${pageNumber}`,
         {
           timeout: 5000,
           signal: controller.signal,
@@ -134,7 +138,7 @@ const BookList = () => {
               count: count,
               next: next,
               previous: previous,
-              resultLength: bookList.length
+              resultLength: bookList?.length ?? 0
             }
             console.warn("pagination info FROM DATA determined to be:", paginationInfoFromData)
             setPaginationInfo(paginationInfoFromData)
@@ -169,6 +173,9 @@ const BookList = () => {
   if (books.length > 0 && !error) {
     content = (<>
       <h2>List of Book, page:{pageNumber}</h2>
+      <PaginationNavigator
+        emptyPagePath={API_ROOT_WITH_EMPTY_PAGE}
+        totalPageCount={totalPages} />
       {books.map(({ author, genre, id, instances, isbn, language, summary, title, url }) => {
         return <Book
           key={id}
@@ -179,6 +186,9 @@ const BookList = () => {
         />
       }
       )}
+      <PaginationNavigator
+        emptyPagePath={API_ROOT_WITH_EMPTY_PAGE}
+        totalPageCount={totalPages} />
 
     </>);
   }
