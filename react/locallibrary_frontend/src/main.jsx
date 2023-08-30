@@ -26,10 +26,6 @@ const router = createBrowserRouter([
         path: "/add",
         element: <AddBook />,
       },
-      {
-        path: "/genremulti",
-        element: <GenreSelect />,
-      },
     ],
   },
 ]);
