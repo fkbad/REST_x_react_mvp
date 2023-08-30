@@ -7,6 +7,7 @@ const BookList = () => {
 
   // get the URL parameter
   let { pageNumber } = useParams()
+  pageNumber = +pageNumber
 
   if (pageNumber === undefined) {
     // default page number when there is no number
@@ -25,21 +26,73 @@ const BookList = () => {
   }, [pageNumber, navigate]);
 
   const [books, setBooks] = useState([]);
+
+  // state to track the pagination info
+  //   count
+  //   next
+  //   previous
+  //   length of results
+  const [paginationInfo, setPaginationInfo] = useState(null)
+
+  // state to keep track of total pages. Could potentially
+  // change if records are added or removed as the user switches pages
+  const [totalPages, setTotalPages] = useState(null)
+
   // to store loading status 
   const [isLoading, setIsLoading] = useState(false);
+
   // to store and errors from fetching from the API
   // either null or some error
   const [error, setError] = useState(null);
 
 
+  // hook to recalculate the total number of pages 
+  useEffect(() => {
+    // console.warn("books now:", books);
+    // console.warn("pagination info now:", paginationInfo);
+
+    if (paginationInfo !== null) {
+      let calculatedTotalPageCount = getTotalPagesFromPaginationInfo(paginationInfo)
+      console.info("total page count found to be:", calculatedTotalPageCount)
+      setTotalPages(calculatedTotalPageCount)
+    }
+  }, [paginationInfo, pageNumber]);
+
+  function getTotalPagesFromPaginationInfo({ count: totalModelCount, next, previous, resultLength }) {
+    /* function to calculate the total number of pages, given the pagination info
+     * from a Django REST framework List GET response
+     *
+     * Input:
+     *     paginationInfo object with fields:
+     *        count: total number of DB models
+     *        next: the URI of the next page's endpoint, if it exists, null if not
+     *        previous: the URI of the previous page's endpoint, if it exists, null if not
+     *        resultLength: the amount of models returned in this response
+     */
+
+    let pageSize = null
+    if (next !== null) {
+      // if there is another page, we know the current page is full
+      // which means that the result length must be the pagination length
+      pageSize = resultLength
+
+      return Math.ceil(totalModelCount / pageSize)
+    } else {
+      // this means we are on the last page
+      return pageNumber
+    }
+
+  }
+
   // GET book data
   useEffect(() => {
+    console.info("books, paginationInfo:", books, paginationInfo)
 
     // flag for ignoring stale request responses
     let ignore_request_output = false;
     // signal controller to be able to cancel axios request 
     let controller = new AbortController();
-    fetchBookPage(pageNumber)
+    fetchBookPage()
 
     // cleanup function
     return (() => {
@@ -73,8 +126,19 @@ const BookList = () => {
             console.info("received data", data);
 
             setIsLoading(false)
-            setBooks(data.results);
-            console.warn("books now:", books)
+            const { count, next, previous, results: bookList } = data
+
+            setBooks(bookList);
+
+            const paginationInfoFromData = {
+              count: count,
+              next: next,
+              previous: previous,
+              resultLength: bookList.length
+            }
+            console.warn("pagination info FROM DATA determined to be:", paginationInfoFromData)
+            setPaginationInfo(paginationInfoFromData)
+
           } else {
             console.warn("received request where ignore_request_output was True", data)
           }
@@ -96,6 +160,7 @@ const BookList = () => {
     // dependency array empty such that this happens immediately
     [pageNumber]
   );
+
 
 
   let content
@@ -140,6 +205,6 @@ const BookList = () => {
       {content}
     </>
   );
-};
+}
 
 export default BookList;
