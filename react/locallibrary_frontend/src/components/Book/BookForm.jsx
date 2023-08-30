@@ -1,12 +1,17 @@
 import { useState } from 'react';
+
+// react-bootstrap imports
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Card from 'react-bootstrap/Card';
-import GenreSelect from './genre/GenreSelect';
-import AuthorSelect from './Author/AuthorSelect';
-import LanguageSelect from './Language/LanguageSelect';
+
+// my imports
+import GenreSelect from '../genre/GenreSelect';
+
+import AuthorSelect from '../Author/AuthorSelect';
+import LanguageSelect from '../Language/LanguageSelect';
 
 function BookForm({ handleOnSubmit }) {
   const [title, setTitle] = useState('')

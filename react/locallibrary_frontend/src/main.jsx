@@ -7,10 +7,9 @@ import {
 } from "react-router-dom";
 import "./index.css";
 
-import BookList from "./components/BookList";
-import AddBook from "./components/AddBook";
 import Header from "./components/Header";
-import GenreSelect from "./components/genre/GenreSelect";
+import BooksList from "./components/Book/BookList";
+import AddBook from "./components/Book/AddBook";
 
 // https://reactrouter.com/en/main/start/tutorial
 const router = createBrowserRouter([
@@ -20,7 +19,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/list",
-        element: <BookList />,
+        element: <BooksList />,
       },
       {
         path: "/add",
