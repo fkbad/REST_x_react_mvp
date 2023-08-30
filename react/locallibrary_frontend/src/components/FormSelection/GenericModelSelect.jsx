@@ -12,7 +12,7 @@
 import axios from "axios";
 import { useEffect, useState } from 'react';
 import Form from 'react-bootstrap/Form';
-import MultiSelectItem from './GenreMultiSelectItem';
+import MultiSelectItem from "./SelectItem";
 
 function GenericModelSelect({
   parentFormName,
@@ -30,16 +30,22 @@ function GenericModelSelect({
    *            passed down from the parent form
    *
    *  modelName: the name of the actual model being used for this generic component. 
-   *  Used to determine:
-   *    the API endpoint
-   *    controlId (parentFormName + modelName)
-   *    how data is parsed in parseModelListForFormOptions()
+   *    Used to determine:
+   *      the API endpoint
+   *      controlId (parentFormName + modelName)
+   *      how data is parsed in parseModelListForFormOptions()
+   *
+   *    Acceptable values: (the singular, lowercase, non-caps django version name of the model)
+   *      book
+   *      bookinstance
+   *      genre
+   *      language
+   *      author
+   *  
    *    
    *  canSelectMultiple: boolean to tell if this should be a multi-select or a single selection.
    *      eg: books should only be able to select one author
    *          but books should be able to select multiple languages
-   *      
-   *
    */
 
   const [models, setModels] = useState([]);
@@ -68,6 +74,7 @@ function GenericModelSelect({
       setIsLoading(true);
       setError(null);
 
+      let modelAPIRoute = getAPIRouteFromModelName(modelName)
 
       // then chains are really nice, literally taking the output from the previous .then as the input to the next one
       // the first argument is a function you define to run when the Promise successfully returns
@@ -117,6 +124,21 @@ function GenericModelSelect({
     []
   );
 
+  function getAPIRouteFromModelName(modelName) {
+    let isBook = modelName === "book"
+    let isBookInstance = modelName === "bookinstance"
+    let isAuthor = modelName === "author"
+    let isGenre = modelName === "genre"
+    let isLanguage = modelName === "language"
+    if (isBook || isBookInstance || isAuthor || isGenre || isLanguage) {
+      return modelName + "s"
+    } else {
+      let error = "Given invalid modelName in API route selector:" + modelName
+      console.error(error)
+      setError(error)
+      return ""
+    }
+  }
   function parseModelListForFormOptions(responseData) {
     /* 
      * function to take in the data response from the /genres/ GET
@@ -143,10 +165,20 @@ function GenericModelSelect({
         { id: 2, name: "SECOND DUMMY GENRE" },
       ]
 
-    } else if (modelName === "language ") {
+    } else if (modelName === "language") {
       return [
         { id: 1, name: "DUMMY LANGUAGE" },
         { id: 2, name: "SECOND DUMMY LANGUAGE" },
+      ]
+    } else if (modelName === "book") {
+      return [
+        { id: 1, name: "DUMMY BOOK" },
+        { id: 2, name: "SECOND DUMMY BOOK" },
+      ]
+    } else if (modelName === "bookinstance") {
+      return [
+        { id: 1, name: "DUMMY BOOK INSTANCE" },
+        { id: 2, name: "SECOND DUMMY INSTANCE" },
       ]
     } else {
       let error = "Given invalid modelName in generic model select:" + modelName
