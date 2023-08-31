@@ -194,21 +194,16 @@ const BookList = () => {
           currentPage={pageNumber}
           totalPageCount={totalPages}
         />
-        {/* this keeps all of the book list items aligned together on the left */}
-        <Stack
-          className="align-items-flex-start max-width-50vw"
-        >
-          {books.map(({ author, genre, id, instances, isbn, language, summary, title, url }) => {
-            return <Book
-              key={id}
-              id={id}
-              title={title}
-              isbn={isbn}
-              summary={summary}
-            />
-          }
-          )}
-        </Stack>
+        {books.map(({ author, genre, id, instances, isbn, language, summary, title, url }) => {
+          return <Book
+            key={id}
+            id={id}
+            title={title}
+            isbn={isbn}
+            summary={summary}
+          />
+        }
+        )}
         <PaginationNavigator
           emptyPagePath={API_ROOT_WITH_EMPTY_PAGE}
           currentPage={pageNumber}
