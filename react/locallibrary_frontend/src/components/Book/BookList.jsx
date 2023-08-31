@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Book from "./Book";
 import { useNavigate, useParams } from "react-router-dom";
 import PaginationNavigator from "../Pagination/PaginationNavigator";
+import { Stack } from "react-bootstrap";
 
 const BookList = () => {
   // STATE, URL PARAMETERS, and CONSTANTS
@@ -183,30 +184,38 @@ const BookList = () => {
 
   // CONTENT DETERMINING CODE
   if (books.length > 0 && !error) {
-    content = (<>
-      <h2>List of Book, page:{pageNumber}</h2>
-      <PaginationNavigator
-        emptyPagePath={API_ROOT_WITH_EMPTY_PAGE}
-        currentPage={pageNumber}
-        totalPageCount={totalPages}
-      />
-      {books.map(({ author, genre, id, instances, isbn, language, summary, title, url }) => {
-        return <Book
-          key={id}
-          id={id}
-          title={title}
-          isbn={isbn}
-          summary={summary}
+    content = (
+      <Stack
+        gap={3}
+        className="align-items-center">
+        <h2>List of Book, page:{pageNumber}</h2>
+        <PaginationNavigator
+          emptyPagePath={API_ROOT_WITH_EMPTY_PAGE}
+          currentPage={pageNumber}
+          totalPageCount={totalPages}
         />
-      }
-      )}
-      <PaginationNavigator
-        emptyPagePath={API_ROOT_WITH_EMPTY_PAGE}
-        currentPage={pageNumber}
-        totalPageCount={totalPages}
-      />
+        {/* this keeps all of the book list items aligned together on the left */}
+        <Stack
+          className="align-items-flex-start max-width-50vw"
+        >
+          {books.map(({ author, genre, id, instances, isbn, language, summary, title, url }) => {
+            return <Book
+              key={id}
+              id={id}
+              title={title}
+              isbn={isbn}
+              summary={summary}
+            />
+          }
+          )}
+        </Stack>
+        <PaginationNavigator
+          emptyPagePath={API_ROOT_WITH_EMPTY_PAGE}
+          currentPage={pageNumber}
+          totalPageCount={totalPages}
+        />
 
-    </>);
+      </Stack >);
   }
 
   else {
