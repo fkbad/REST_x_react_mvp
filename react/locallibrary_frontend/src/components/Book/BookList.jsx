@@ -1,9 +1,19 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Book from "./Book";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import PaginationNavigator from "../Pagination/PaginationNavigator";
 import { Stack } from "react-bootstrap";
+import { styled } from "styled-components";
+
+const MyBookListWrapper = styled.div`
+display: flex;
+flex-direction: column;
+flex-wrap: no-wrap;
+align-items: flex-start;
+width: 50vw;
+`;
+
 
 const BookList = () => {
   // STATE, URL PARAMETERS, and CONSTANTS
@@ -31,8 +41,13 @@ const BookList = () => {
   const [error, setError] = useState(null);
 
 
-  let API_ROOT = "http://localhost:8000/api/books/"
-  let API_ROOT_WITH_EMPTY_PAGE = `${API_ROOT}?page=`
+  // path to Book List
+  let API_ROOT = "http://localhost:8000/api/books/";
+  // empty page search parameter appended for easy appending in request
+  let API_ROOT_WITH_EMPTY_PAGE = `${API_ROOT}?page=`;
+
+  let location = useLocation();
+  let locationNoPageNumber = removePageNumberFromLocation(location);
 
   // variable to fill in with page contents based on 
   // state
@@ -156,6 +171,39 @@ const BookList = () => {
     [pageNumber]
   );
   // HELPER FUNCTIONS
+  //
+  function removePageNumberFromLocation(location) {
+    /* function to take in a page location
+     * (/list/books/number)
+     * and remove the final number from it
+     * returning /list/books
+     *
+     * generalized so this logic could be used in other modules
+     *
+     * Inputs:
+     *    location: the Location object of the webpage, returned from the router.useLocation() hook
+     *              has fields:
+     *                pathname: eg: /list/books/4
+     *                search
+     *                hash
+     *                state
+     *                key
+     *
+     * Outputs:
+     *    string: the location with any number removed
+     */
+    // remove everything after the last backslash
+    // https://stackoverflow.com/questions/14462407/remove-everything-after-last-backslash
+    console.groupCollapsed("removing page number")
+    console.info("from: ", location)
+
+    const pathString = location.pathname
+    let strippedPathString = pathString.substr(0, pathString.lastIndexOf("/") + 1);
+    console.info("after processing:", strippedPathString)
+    console.groupEnd()
+
+    return strippedPathString
+  }
   function getTotalPagesFromPaginationInfo({ count: totalModelCount, next, previous, resultLength }) {
     /* function to calculate the total number of pages, given the pagination info
      * from a Django REST framework List GET response
@@ -185,32 +233,32 @@ const BookList = () => {
   // CONTENT DETERMINING CODE
   if (books.length > 0 && !error) {
     content = (
-      <Stack
-        gap={3}
-        className="align-items-center">
-        <h2>List of Book, page:{pageNumber}</h2>
-        <PaginationNavigator
-          emptyPagePath={API_ROOT_WITH_EMPTY_PAGE}
-          currentPage={pageNumber}
-          totalPageCount={totalPages}
-        />
-        {books.map(({ author, genre, id, instances, isbn, language, summary, title, url }) => {
-          return <Book
-            key={id}
-            id={id}
-            title={title}
-            isbn={isbn}
-            summary={summary}
+      <>
+        <h2>Book List</h2>
+        <Stack gap={3} className="align-items-center">
+          <PaginationNavigator
+            emptyPagePath={locationNoPageNumber}
+            currentPage={pageNumber}
+            totalPageCount={totalPages}
           />
-        }
-        )}
-        <PaginationNavigator
-          emptyPagePath={API_ROOT_WITH_EMPTY_PAGE}
-          currentPage={pageNumber}
-          totalPageCount={totalPages}
-        />
+          <MyBookListWrapper>
+            <Stack gap={3}>
+              {books.map(book =>
+                <Book className="w-100"
+                  book={book}
+                />
+              )}
+            </Stack>
+          </MyBookListWrapper>
+          <PaginationNavigator
+            emptyPagePath={locationNoPageNumber}
+            currentPage={pageNumber}
+            totalPageCount={totalPages}
+          />
 
-      </Stack >);
+        </Stack >
+      </>
+    );
   }
 
   else {
@@ -230,9 +278,9 @@ const BookList = () => {
 
   // RENDER COMPONENT
   return (
-    <>
+    <Stack direction="vertical" className="align-items-center">
       {content}
-    </>
+    </Stack>
   );
 }
 
